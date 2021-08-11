@@ -79,7 +79,8 @@ app.get("/api/items/:id", async (req, res) => {
           amount: itemData.price,
           //   decimals: itemData.installments.amount, NO ENCONTRADO EN LA API
         },
-        picture: itemData.thumbnail,
+        // picture: itemData.thumbnail,
+        picture: itemData.pictures[0].url,
         condition: itemData.condition,
         free_shipping: itemData.shipping?.free_shipping,
         sold_quantity: itemData.sold_quantity,
