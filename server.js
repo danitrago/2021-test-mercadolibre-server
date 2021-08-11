@@ -38,12 +38,21 @@ app.get("/api/items", async (req, res) => {
     });
 });
 
+const getProductCategory = (resolve, product) => {
+  fetch("https://api.mercadolibre.com/categories/" + product.category_id)
+    .then((response) => response.json())
+    .then((data) => {
+      resolve({ ...product, category: { ...data } });
+    });
+};
+
 app.get("/api/items/:id", async (req, res) => {
   var itemData = new Promise((resolve) => {
     fetch("https://api.mercadolibre.com/items/" + req.params.id)
       .then((response) => response.json())
       .then((data) => {
-        resolve(data);
+        // resolve(data);
+        getProductCategory(resolve, data); // se obtiene la data de la categoría para obtener "path_from_root"
       });
   });
   var itemDescription = new Promise((resolve) => {
@@ -53,7 +62,7 @@ app.get("/api/items/:id", async (req, res) => {
         resolve(data);
       });
   });
-  // ejecutamos los dos request al tiempo con Promise.all
+  // ejecutamos los request al tiempo con Promise.all
   Promise.all([itemData, itemDescription]).then((values) => {
     let itemData = values[0];
     let itemDescription = values[1];
@@ -62,7 +71,6 @@ app.get("/api/items/:id", async (req, res) => {
         name: "Daniel",
         lastname: "Molina",
       },
-      //   categories: itemData.filters[0]?.values[0]?.path_from_root || [],
       item: {
         id: itemData.id,
         title: itemData.title,
@@ -76,6 +84,7 @@ app.get("/api/items/:id", async (req, res) => {
         free_shipping: itemData.shipping?.free_shipping,
         sold_quantity: itemData.sold_quantity,
         description: itemDescription.plain_text,
+        categories: itemData.category.path_from_root || [],
       },
     }); // end res
   });
