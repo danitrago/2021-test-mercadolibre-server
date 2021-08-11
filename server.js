@@ -19,7 +19,7 @@ app.get("/api/items", async (req, res) => {
           lastname: "Molina",
         },
         categories: data.filters[0]?.values[0]?.path_from_root || [],
-        items: data.results.map((product) => {
+        items: data.results.slice(0, 4).map((product) => {
           return {
             id: product.id,
             title: product.title,
