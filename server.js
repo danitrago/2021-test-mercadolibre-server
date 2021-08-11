@@ -1,7 +1,13 @@
 const express = require("express");
 const app = express();
+var cors = require("cors");
 const port = 4000;
 const fetch = require("node-fetch");
+
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ limit: "50mb" }));
+
+app.use(cors());
 
 app.get("/api/items", async (req, res) => {
   fetch("https://api.mercadolibre.com/sites/MLA/search?q=" + req.query.q)
@@ -56,7 +62,7 @@ app.get("/api/items/:id", async (req, res) => {
         name: "Daniel",
         lastname: "Molina",
       },
-    //   categories: itemData.filters[0]?.values[0]?.path_from_root || [],
+      //   categories: itemData.filters[0]?.values[0]?.path_from_root || [],
       item: {
         id: itemData.id,
         title: itemData.title,
@@ -67,7 +73,7 @@ app.get("/api/items/:id", async (req, res) => {
         },
         picture: itemData.thumbnail,
         condition: itemData.condition,
-        free_shipping: itemData.shipping.free_shipping,
+        free_shipping: itemData.shipping?.free_shipping,
         sold_quantity: itemData.sold_quantity,
         description: itemDescription.plain_text,
       },
